@@ -5,9 +5,24 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
-func Hello(writer http.ResponseWriter, req *http.Request) {
+type Hello struct {
+	Logger *log.Logger
+}
+
+func (h *Hello) Hello(writer http.ResponseWriter, req *http.Request) {
+	defer func(start time.Time) {
+		h.Logger.Printf("| %v | %s | %s | %s\n",
+			time.Since(start),
+			req.RemoteAddr,
+			req.Method,
+			req.RequestURI,
+			//req.URL.Path,
+		)
+	}(time.Now())
+
 	writer.Header().Set("Content-Type", "application/json")
 
 	res := struct {
