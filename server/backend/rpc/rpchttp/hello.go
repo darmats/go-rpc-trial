@@ -25,7 +25,7 @@ func (h *Hello) Hello(writer http.ResponseWriter, req *http.Request) {
 
 	wait := req.URL.Query().Get("wait")
 	if wait == "1" {
-		time.Sleep(time.Second)
+		time.Sleep(500 * time.Millisecond)
 	}
 
 	res := struct {

@@ -23,6 +23,8 @@ func run() int {
 
 func route(g *gin.Engine) {
 	hello := &router.Hello{}
-	g.GET("/hello/http", hello.HTTP)
-	g.GET("/hello/grpc", hello.GRPC)
+	g.GET("/hello/http1", hello.HTTP1)
+	g.GET("/hello/http2", hello.HTTP2)
+	g.GET("/hello/grpc1", hello.GRPC1)
+	g.GET("/hello/grpc2", hello.GRPC2)
 }
