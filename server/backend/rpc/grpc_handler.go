@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/darmats/go-rpc-trial/server/backend/define/grpc/pb"
+	"github.com/darmats/go-rpc-trial/define/grpc/pb"
 	"github.com/darmats/go-rpc-trial/server/backend/rpc/rpcgrpc"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/darmats/go-rpc-trial/server/proxy/define/grpc/pb"
+	"github.com/darmats/go-rpc-trial/define/grpc/pb"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"

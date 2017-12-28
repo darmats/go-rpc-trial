@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/darmats/go-rpc-trial/server/backend/define/grpc/pb"
+	"github.com/darmats/go-rpc-trial/define/grpc/pb"
 	"golang.org/x/net/context"
 )
 
