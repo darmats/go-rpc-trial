@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"sync"
@@ -17,6 +18,7 @@ type Hello struct {
 
 func (h *Hello) HTTP(ctx *gin.Context) {
 	name := ctx.DefaultQuery("name", "user")
+	wait := ctx.DefaultQuery("w", "0")
 
 	n, err := strconv.Atoi(ctx.DefaultQuery("n", "1"))
 	if err != nil {
@@ -38,7 +40,9 @@ func (h *Hello) HTTP(ctx *gin.Context) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				req, err := http.NewRequest(http.MethodGet, EndPointHTTP+"/hello?name="+name, nil)
+
+				url := fmt.Sprintf(`%s/hello?name=%s&wait=%s`, EndPointHTTP, name, wait)
+				req, err := http.NewRequest(http.MethodGet, url, nil)
 				if err != nil {
 					ctx.AbortWithError(http.StatusInternalServerError, err)
 					return
@@ -61,6 +65,8 @@ func (h *Hello) HTTP(ctx *gin.Context) {
 
 func (h *Hello) GRPC(ctx *gin.Context) {
 	name := ctx.DefaultQuery("name", "user")
+	wait := ctx.DefaultQuery("w", "0")
+	w, _ := strconv.Atoi(wait)
 
 	n, err := strconv.Atoi(ctx.DefaultQuery("n", "1"))
 	if err != nil {
@@ -89,7 +95,7 @@ func (h *Hello) GRPC(ctx *gin.Context) {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				_, err := client.Say(context.Background(), &pb.HelloRequest{Name: name})
+				_, err := client.Say(context.Background(), &pb.HelloRequest{Name: name, Wait: int32(w)})
 				if err != nil {
 					ctx.AbortWithError(http.StatusInternalServerError, err)
 					return

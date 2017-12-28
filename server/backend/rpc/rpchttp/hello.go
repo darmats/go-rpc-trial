@@ -23,7 +23,10 @@ func (h *Hello) Hello(writer http.ResponseWriter, req *http.Request) {
 		)
 	}(time.Now())
 
-	writer.Header().Set("Content-Type", "application/json")
+	wait := req.URL.Query().Get("wait")
+	if wait == "1" {
+		time.Sleep(time.Second)
+	}
 
 	res := struct {
 		Message string `json:"message"`
@@ -41,6 +44,8 @@ func (h *Hello) Hello(writer http.ResponseWriter, req *http.Request) {
 		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
 	writer.Write(b)
 }

@@ -3,6 +3,7 @@ package rpcgrpc
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/darmats/go-rpc-trial/server/backend/define/grpc/pb"
 	"golang.org/x/net/context"
@@ -13,6 +14,10 @@ type Hello struct {
 }
 
 func (h *Hello) Say(ctx context.Context, req *pb.HelloRequest) (*pb.HelloResponse, error) {
+	if req.Wait == 1 {
+		time.Sleep(time.Second)
+	}
+
 	res := &pb.HelloResponse{}
 	name := req.Name
 	if len(name) == 0 {
