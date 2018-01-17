@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/darmats/go-rpc-trial/define"
 	"github.com/darmats/go-rpc-trial/define/grpc/pb"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/context"
@@ -41,7 +42,7 @@ func (h *Hello) HTTP1(ctx *gin.Context) {
 			go func() {
 				defer wg.Done()
 
-				url := fmt.Sprintf(`%s/hello?name=%s&wait=%s`, EndPointHTTP, name, wait)
+				url := fmt.Sprintf(`%s/hello?name=%s&wait=%s`, define.BackendHTTPEndPoint, name, wait)
 				req, err := http.NewRequest(http.MethodGet, url, nil)
 				if err != nil {
 					ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -88,7 +89,7 @@ func (h *Hello) HTTP2(ctx *gin.Context) {
 			defer wg.Done()
 
 			for i := 0; i < n/c; i++ {
-				url := fmt.Sprintf(`%s/hello?name=%s&wait=%s`, EndPointHTTP, name, wait)
+				url := fmt.Sprintf(`%s/hello?name=%s&wait=%s`, define.BackendHTTPEndPoint, name, wait)
 				req, err := http.NewRequest(http.MethodGet, url, nil)
 				if err != nil {
 					ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -128,7 +129,7 @@ func (h *Hello) GRPC1(ctx *gin.Context) {
 
 	start := time.Now()
 
-	con, err := grpc.Dial(EndPointGRPC, grpc.WithInsecure())
+	con, err := grpc.Dial(define.BackendGRPCEndPoint, grpc.WithInsecure())
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -174,7 +175,7 @@ func (h *Hello) GRPC2(ctx *gin.Context) {
 
 	start := time.Now()
 
-	con, err := grpc.Dial(EndPointGRPC, grpc.WithInsecure())
+	con, err := grpc.Dial(define.BackendGRPCEndPoint, grpc.WithInsecure())
 	if err != nil {
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return

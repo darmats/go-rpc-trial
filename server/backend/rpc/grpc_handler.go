@@ -6,8 +6,10 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"time"
 
+	"github.com/darmats/go-rpc-trial/define"
 	"github.com/darmats/go-rpc-trial/define/grpc/pb"
 	"github.com/darmats/go-rpc-trial/server/backend/rpc/rpcgrpc"
 	"golang.org/x/net/context"
@@ -27,7 +29,7 @@ func (h *GRPCHandler) ListenAndServe(address string) error {
 	h.Logger = log.New(os.Stdout, "[gRPC] ", log.Ldate|log.Lmicroseconds)
 
 	if len(address) == 0 {
-		address = ":50051"
+		address = ":" + define.BackendGRPCPort
 	}
 
 	listener, err := net.Listen("tcp", address)
