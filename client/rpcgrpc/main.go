@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/darmats/go-rpc-trial/define"
@@ -25,7 +25,7 @@ func main() {
 func run() int {
 
 	flag.IntVar(&mode, "m", 1, "")
-	flag.IntVar(&loop, "l", 100000, "")
+	flag.IntVar(&loop, "l", 10000, "")
 	flag.Parse()
 
 	var err error
@@ -64,7 +64,7 @@ func run1() error {
 	client := pb.NewHelloClient(conn)
 
 	for i := 0; i < loop; i++ {
-		_, err := client.Say(context.Background(), &pb.HelloRequest{Name: "World"})
+		_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World"})
 		if err != nil {
 			return err
 		}
@@ -74,13 +74,76 @@ func run1() error {
 }
 
 func run2() error {
-	return errors.New("not implemented")
+	conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	client := pb.NewHelloClient(conn)
+
+	// todo: receive err
+	//e := make(chan error)
+	wg := &sync.WaitGroup{}
+	for i := 0; i < loop; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World"})
+			if err != nil {
+				//e <- err
+				return
+			}
+		}()
+	}
+	wg.Wait()
+
+	return nil
 }
 
 func run3() error {
-	return errors.New("not implemented")
+	for i := 0; i < loop; i++ {
+		conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
+		if err != nil {
+			return err
+		}
+
+		client := pb.NewHelloClient(conn)
+		_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World"})
+		if err != nil {
+			conn.Close()
+			return err
+		}
+		conn.Close()
+	}
+
+	return nil
 }
 
 func run4() error {
-	return errors.New("not implemented")
+	// todo: receive err
+	wg := &sync.WaitGroup{}
+	for i := 0; i < loop; i++ {
+		wg.Add(1)
+
+		go func() {
+			defer wg.Done()
+
+			conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
+			if err != nil {
+				return
+			}
+
+			client := pb.NewHelloClient(conn)
+			_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World"})
+			if err != nil {
+				conn.Close()
+				return
+			}
+			conn.Close()
+		}()
+	}
+	wg.Wait()
+
+	return nil
 }
