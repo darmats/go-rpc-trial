@@ -14,6 +14,6 @@ go build -i -o ../go-rpc-trial-proxy
 cd ../
 
 
-./shutdown.sh
+./stop.sh
 nohup ./go-rpc-trial-backend >> go-rpc-trial-backend.log 2>&1 < /dev/null &
 nohup ./go-rpc-trial-proxy >> go-rpc-trial-proxy.log 2>&1 < /dev/null &
