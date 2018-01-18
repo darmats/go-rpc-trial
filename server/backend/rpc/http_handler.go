@@ -19,7 +19,7 @@ func (h *HTTPHandler) ListenAndServe(address string) error {
 	h.Logger = log.New(os.Stdout, "[HTTP] ", log.Ldate|log.Lmicroseconds)
 
 	if len(address) == 0 {
-		address = ":8080"
+		return errors.New("empty address")
 	}
 
 	hello := &rpchttp.Hello{h.Logger}

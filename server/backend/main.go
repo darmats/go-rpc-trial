@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/darmats/go-rpc-trial/define"
 	"github.com/darmats/go-rpc-trial/server/backend/rpc"
 )
 
@@ -26,7 +27,7 @@ func run() int {
 
 	for _, rpcHandler := range rpcHandlers {
 		go func(handler rpc.Handler) {
-			if err := handler.ListenAndServe(""); err != nil {
+			if err := handler.ListenAndServe(address(handler)); err != nil {
 				log.Println(err)
 			}
 		}(rpcHandler)
@@ -41,4 +42,15 @@ func run() int {
 	}
 
 	return 0
+}
+
+func address(handler rpc.Handler) string {
+	switch handler.(type) {
+	case *rpc.HTTPHandler:
+		return ":8080"
+	case *rpc.GRPCHandler:
+		return ":" + define.BackendGRPCPort
+	default:
+		return ""
+	}
 }
