@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "git.apache.org/thrift.git"
+  packages = ["lib/go/thrift"]
+  revision = "327ebb6c2b6df8bf075da02ef45a2a034e9b79ba"
+  version = "0.11.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/gin-contrib/sse"
   packages = ["."]
@@ -76,6 +82,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8b4ab03f5e970d208c736b21902b0a879e685846ac88edf7a2f54692ce70bf28"
+  inputs-digest = "137c29dd9f1920191fcaba91df3d0385f408b0d6388f70376fe64e1c642d9f1c"
   solver-name = "gps-cdcl"
   solver-version = 1
