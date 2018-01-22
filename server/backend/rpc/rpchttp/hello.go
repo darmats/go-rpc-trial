@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -24,8 +25,9 @@ func (h *Hello) Hello(writer http.ResponseWriter, req *http.Request) {
 	}(time.Now())
 
 	wait := req.URL.Query().Get("wait")
-	if wait == "1" {
-		time.Sleep(500 * time.Millisecond)
+	w, _ := strconv.Atoi(wait)
+	if w > 0 {
+		time.Sleep(time.Duration(w) * time.Millisecond)
 	}
 
 	res := struct {

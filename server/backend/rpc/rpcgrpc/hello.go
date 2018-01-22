@@ -14,8 +14,8 @@ type Hello struct {
 }
 
 func (h *Hello) Say(ctx context.Context, req *pb.HelloRequest) (*pb.HelloResponse, error) {
-	if req.Wait == 1 {
-		time.Sleep(500 * time.Millisecond)
+	if req.Wait > 0 {
+		time.Sleep(time.Duration(req.Wait) * time.Millisecond)
 	}
 
 	res := &pb.HelloResponse{}

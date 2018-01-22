@@ -13,9 +13,20 @@ import (
 	"google.golang.org/grpc"
 )
 
+////go:generate stringer -type=Protocol
+//type Protocol int
+//
+//const (
+//	http   Protocol = 1
+//	gRPC   Protocol = 2
+//	thrift Protocol = 3
+//)
+
 var (
+	//protocol Protocol
 	mode int
 	loop int
+	wait int
 )
 
 func main() {
@@ -24,23 +35,29 @@ func main() {
 
 func run() int {
 
+	//proto := flag.Int("p", int(http), "protocol (1:http, 2:gRPC, 3:thrift)")
 	flag.IntVar(&mode, "m", 1, "")
-	flag.IntVar(&loop, "l", 10000, "")
+	flag.IntVar(&loop, "l", 10000, "loop count")
+	flag.IntVar(&wait, "w", 0, "wait (millisecond)")
 	flag.Parse()
+	//protocol = Protocol(*proto)
 
 	var err error
+
+	//log.Printf("protocol: %v, method: Run%d(), loop: %d, wait: %d millisecond", protocol, mode, loop, wait)
+	log.Printf("method: Run%d(), loop: %d, wait: %d millisecond", mode, loop, wait)
 
 	start := time.Now()
 
 	switch mode {
 	case 1:
-		err = run1()
+		err = Run1()
 	case 2:
-		err = run2()
+		err = Run2()
 	case 3:
-		err = run3()
+		err = Run3()
 	case 4:
-		err = run4()
+		err = Run4()
 	}
 
 	d := time.Since(start)
@@ -50,12 +67,12 @@ func run() int {
 		return 1
 	}
 
-	log.Println(d)
+	log.Printf("duration: %v", d)
 
 	return 0
 }
 
-func run1() error {
+func Run1() error {
 	conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
 	if err != nil {
 		return err
@@ -64,7 +81,7 @@ func run1() error {
 	client := pb.NewHelloClient(conn)
 
 	for i := 0; i < loop; i++ {
-		_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World"})
+		_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World", Wait: int32(wait)})
 		if err != nil {
 			return err
 		}
@@ -73,7 +90,7 @@ func run1() error {
 	return nil
 }
 
-func run2() error {
+func Run2() error {
 	conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
 	if err != nil {
 		return err
@@ -89,7 +106,7 @@ func run2() error {
 		go func() {
 			defer wg.Done()
 
-			_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World"})
+			_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World", Wait: int32(wait)})
 			if err != nil {
 				//e <- err
 				return
@@ -101,7 +118,7 @@ func run2() error {
 	return nil
 }
 
-func run3() error {
+func Run3() error {
 	for i := 0; i < loop; i++ {
 		conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
 		if err != nil {
@@ -109,7 +126,7 @@ func run3() error {
 		}
 
 		client := pb.NewHelloClient(conn)
-		_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World"})
+		_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World", Wait: int32(wait)})
 		if err != nil {
 			conn.Close()
 			return err
@@ -120,7 +137,7 @@ func run3() error {
 	return nil
 }
 
-func run4() error {
+func Run4() error {
 	// todo: receive err
 	wg := &sync.WaitGroup{}
 	for i := 0; i < loop; i++ {
@@ -135,7 +152,7 @@ func run4() error {
 			}
 
 			client := pb.NewHelloClient(conn)
-			_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World"})
+			_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World", Wait: int32(wait)})
 			if err != nil {
 				conn.Close()
 				return
