@@ -7,4 +7,6 @@ const (
 	BackendHost         = "127.0.0.1"
 	BackendHTTPEndPoint = "http://" + BackendHost + ":" + BackendHTTPPort
 	BackendGRPCEndPoint = BackendHost + ":" + BackendGRPCPort
+
+	ProxyHTTPPort = "8088"
 )

@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/darmats/go-rpc-trial/define"
 	"github.com/darmats/go-rpc-trial/server/proxy/router"
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,7 @@ func run() int {
 	g := gin.Default()
 	route(g)
 
-	g.Run(":8088")
+	g.Run(":" + define.ProxyHTTPPort)
 
 	return 0
 }
