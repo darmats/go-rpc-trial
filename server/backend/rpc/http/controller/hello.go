@@ -1,4 +1,4 @@
-package rpchttp
+package controller
 
 import (
 	"encoding/json"

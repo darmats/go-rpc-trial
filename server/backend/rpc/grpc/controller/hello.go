@@ -1,4 +1,4 @@
-package rpcgrpc
+package controller
 
 import (
 	"fmt"

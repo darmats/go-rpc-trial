@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/darmats/go-rpc-trial/define/grpc/pb"
-	"github.com/darmats/go-rpc-trial/server/backend/rpc/rpcgrpc"
+	"github.com/darmats/go-rpc-trial/server/backend/rpc/grpc/controller"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -39,7 +39,7 @@ func (h *GRPCHandler) ListenAndServe(address string) error {
 		grpc.UnaryInterceptor(h.unaryInterceptor()),
 	)
 
-	pb.RegisterHelloServer(srv, &rpcgrpc.Hello{h.Logger})
+	pb.RegisterHelloServer(srv, &controller.Hello{h.Logger})
 	reflection.Register(srv)
 
 	h.Logger.Printf("gRPC listen start on %v\n", address)

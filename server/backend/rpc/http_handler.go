@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/darmats/go-rpc-trial/server/backend/rpc/rpchttp"
+	"github.com/darmats/go-rpc-trial/server/backend/rpc/http/controller"
 )
 
 type HTTPHandler struct {
@@ -22,7 +22,7 @@ func (h *HTTPHandler) ListenAndServe(address string) error {
 		return errors.New("empty address")
 	}
 
-	hello := &rpchttp.Hello{h.Logger}
+	hello := &controller.Hello{h.Logger}
 	http.HandleFunc("/hello", hello.Hello)
 
 	h.Logger.Printf("HTTP listen start on %v\n", address)
