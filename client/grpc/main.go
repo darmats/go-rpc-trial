@@ -13,51 +13,34 @@ import (
 	"google.golang.org/grpc"
 )
 
-////go:generate stringer -type=Protocol
-//type Protocol int
-//
-//const (
-//	http   Protocol = 1
-//	gRPC   Protocol = 2
-//	thrift Protocol = 3
-//)
-
-var (
-	//protocol Protocol
-	mode int
-	loop int
-	wait int
-)
-
 func main() {
 	os.Exit(run())
 }
 
 func run() int {
 
-	//proto := flag.Int("p", int(http), "protocol (1:http, 2:gRPC, 3:thrift)")
+	var mode, loop, wait int
+
 	flag.IntVar(&mode, "m", 1, "")
 	flag.IntVar(&loop, "l", 10000, "loop count")
 	flag.IntVar(&wait, "w", 0, "wait (millisecond)")
 	flag.Parse()
-	//protocol = Protocol(*proto)
 
 	var err error
 
-	//log.Printf("protocol: %v, method: Run%d(), loop: %d, wait: %d millisecond", protocol, mode, loop, wait)
 	log.Printf("method: Run%d(), loop: %d, wait: %d millisecond", mode, loop, wait)
 
 	start := time.Now()
 
 	switch mode {
 	case 1:
-		err = Run1()
+		err = Run1(loop, wait)
 	case 2:
-		err = Run2()
+		err = Run2(loop, wait)
 	case 3:
-		err = Run3()
+		err = Run3(loop, wait)
 	case 4:
-		err = Run4()
+		err = Run4(loop, wait)
 	}
 
 	d := time.Since(start)
@@ -72,7 +55,7 @@ func run() int {
 	return 0
 }
 
-func Run1() error {
+func Run1(loop, wait int) error {
 	conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
 	if err != nil {
 		return err
@@ -90,7 +73,7 @@ func Run1() error {
 	return nil
 }
 
-func Run2() error {
+func Run2(loop, wait int) error {
 	conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
 	if err != nil {
 		return err
@@ -118,7 +101,7 @@ func Run2() error {
 	return nil
 }
 
-func Run3() error {
+func Run3(loop, wait int) error {
 	for i := 0; i < loop; i++ {
 		conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
 		if err != nil {
@@ -137,7 +120,7 @@ func Run3() error {
 	return nil
 }
 
-func Run4() error {
+func Run4(loop, wait int) error {
 	// todo: receive err
 	wg := &sync.WaitGroup{}
 	for i := 0; i < loop; i++ {
