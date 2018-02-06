@@ -42,7 +42,7 @@ func (h *Hello) HTTP1(ctx *gin.Context) {
 			go func() {
 				defer wg.Done()
 
-				url := fmt.Sprintf(`%s/hello?name=%s&wait=%s`, define.BackendHTTPEndPoint, name, wait)
+				url := fmt.Sprintf(`%s/hello?name=%s&wait=%d`, define.BackendHTTPEndPoint, name, wait)
 				req, err := http.NewRequest(http.MethodGet, url, nil)
 				if err != nil {
 					ctx.AbortWithError(http.StatusInternalServerError, err)

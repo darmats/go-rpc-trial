@@ -81,8 +81,7 @@ func Run2(loop, wait int) error {
 	defer conn.Close()
 	client := pb.NewHelloClient(conn)
 
-	// todo: receive err
-	//e := make(chan error)
+	e := make(chan error)
 	wg := &sync.WaitGroup{}
 	for i := 0; i < loop; i++ {
 		wg.Add(1)
@@ -91,14 +90,18 @@ func Run2(loop, wait int) error {
 
 			_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World", Wait: int32(wait)})
 			if err != nil {
-				//e <- err
+				e <- err
 				return
 			}
 		}()
 	}
-	wg.Wait()
 
-	return nil
+	go func() {
+		wg.Wait()
+		e <- nil
+	}()
+
+	return <-e
 }
 
 func Run3(loop, wait int) error {
@@ -121,7 +124,7 @@ func Run3(loop, wait int) error {
 }
 
 func Run4(loop, wait int) error {
-	// todo: receive err
+	e := make(chan error)
 	wg := &sync.WaitGroup{}
 	for i := 0; i < loop; i++ {
 		wg.Add(1)
@@ -131,19 +134,24 @@ func Run4(loop, wait int) error {
 
 			conn, err := grpc.Dial(":"+define.BackendGRPCPort, grpc.WithInsecure())
 			if err != nil {
+				e <- err
 				return
 			}
+			defer conn.Close()
 
 			client := pb.NewHelloClient(conn)
 			_, err = client.Say(context.Background(), &pb.HelloRequest{Name: "World", Wait: int32(wait)})
 			if err != nil {
-				conn.Close()
+				e <- err
 				return
 			}
-			conn.Close()
 		}()
 	}
-	wg.Wait()
 
-	return nil
+	go func() {
+		wg.Wait()
+		e <- nil
+	}()
+
+	return <-e
 }
